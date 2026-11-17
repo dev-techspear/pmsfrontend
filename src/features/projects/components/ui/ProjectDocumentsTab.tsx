@@ -9,9 +9,11 @@ import {
   Upload, File, FileText, FileImage, FileVideo, FileCode,
   FileArchive, ExternalLink, Trash2, Search, Link2, X,
   FolderOpen, CloudUpload, Download, Eye, MoreVertical,
-  FileSpreadsheet, Presentation
+  FileSpreadsheet, Presentation, Lock, ShieldCheck
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { ShareWithPicker, ShareValue, EVERYONE } from './ShareWithPicker';
+import { DOCUMENT_ACCEPT, DOCUMENT_MAX_MB } from '@/features/projects/constants/sharing';
 
 const API_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/v1').replace(/\/api\/v1$/, '');
 const resolveUrl = (url: string) => (url?.startsWith('http') ? url : `${API_BASE}${url}`);
@@ -81,8 +83,9 @@ function DropZone({ onFiles, uploading }: DropZoneProps) {
         ref={inputRef}
         type="file"
         multiple
+        accept={DOCUMENT_ACCEPT}
         className="hidden"
-        onChange={(e) => e.target.files && onFiles(e.target.files)}
+        onChange={(e) => { if (e.target.files) onFiles(e.target.files); e.target.value = ''; }}
       />
       <div
         className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center"
@@ -97,7 +100,7 @@ function DropZone({ onFiles, uploading }: DropZoneProps) {
         {uploading ? 'Uploading…' : 'Drag & drop files or click to browse'}
       </p>
       <p className="text-[11px] mt-1" style={{ color: 'var(--text-muted)' }}>
-        Supports any file type · Max 50 MB per file
+        Max {DOCUMENT_MAX_MB} MB per file · you choose who can see it
       </p>
     </div>
   );
@@ -183,54 +186,45 @@ function LinkModal({ projectId, onClose, onSaved }: LinkModalProps) {
   );
 }
 
-interface DocCardProps { doc: Document; onDelete: (id: number) => void; deleting: boolean; }
+interface DocCardProps {
+  doc: Document;
+  onDelete: (id: number) => void;
+  onManage: (doc: Document) => void;
+  deleting: boolean;
+}
 
-function DocCard({ doc, onDelete, deleting }: DocCardProps) {
+function DocCard({ doc, onDelete, onManage, deleting }: DocCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { showToast } = useToast();
   const { icon: Icon, color, bg } = getFileIcon(doc.file_type);
-  const isLink = doc.file_type === 'url' || (doc.file_url?.startsWith('http') && !doc.file_url?.startsWith('/upload'));
-  const viewUrl = `${API_BASE}/api/v1/documents/${doc.id}/download?inline=true&token=${localStorage.getItem('pms_token')}`;
-  const downloadUrl = `${API_BASE}/api/v1/documents/${doc.id}/download?token=${localStorage.getItem('pms_token')}`;
+  const isLink = !doc.has_file && (doc.file_type === 'url' || !!doc.file_url?.startsWith('http'));
+  const canManage = doc.can_manage !== false;
 
-  const handleViewDocument = async () => {
+  // Files are never reachable by a permanent URL. The server checks sharing first and returns a
+  // short-lived storage link; the auth token is never put in a URL.
+  const openFile = async (mode: 'view' | 'download') => {
+    // Open the tab inside the click so popup blockers allow it, then point it at the link.
+    const tab = mode === 'view' ? window.open('', '_blank') : null;
     try {
-      const token = localStorage.getItem('pms_token');
-      const response = await fetch(viewUrl, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) throw new Error('Failed to fetch document');
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-    } catch (error) {
-      console.error('Failed to view document:', error);
+      const { url } = await documentsService.getDownloadUrl(doc.id, mode === 'view');
+      if (tab) {
+        tab.location.href = url;
+      } else {
+        const a = document.createElement('a');
+        a.href = url;
+        a.rel = 'noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    } catch {
+      tab?.close();
+      showToast('error', 'Error', 'Could not open this document.');
     }
   };
 
-  const handleDownloadDocument = async () => {
-    try {
-      const token = localStorage.getItem('pms_token');
-      const response = await fetch(downloadUrl, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) throw new Error('Failed to fetch document');
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = doc.title;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to download document:', error);
-    }
-  };
+  const openPrimary = () => (isLink ? window.open(doc.file_url, '_blank', 'noopener,noreferrer') : openFile('view'));
+  const menuItem = 'w-full flex items-center gap-2 px-3 py-2.5 text-[12px] font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors';
 
   return (
     <div
@@ -245,7 +239,7 @@ function DocCard({ doc, onDelete, deleting }: DocCardProps) {
         <Icon size={36} color={color} strokeWidth={1.5} />
         <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: `${bg}cc` }}>
           <div
-            onClick={e => { e.stopPropagation(); if (isLink) window.open(doc.file_url, '_blank'); else handleViewDocument(); }}
+            onClick={e => { e.stopPropagation(); openPrimary(); }}
             className="cursor-pointer w-9 h-9 rounded-xl flex items-center justify-center shadow-md transition-transform hover:scale-110"
             style={{ background: color, color: '#fff' }}
             title={isLink ? 'Open link' : 'View file'}
@@ -254,7 +248,7 @@ function DocCard({ doc, onDelete, deleting }: DocCardProps) {
           </div>
           {!isLink && (
             <div
-              onClick={e => { e.stopPropagation(); handleDownloadDocument(); }}
+              onClick={e => { e.stopPropagation(); openFile('download'); }}
               className="cursor-pointer w-9 h-9 rounded-xl flex items-center justify-center shadow-md transition-transform hover:scale-110"
               style={{ background: '#0f172a', color: '#fff' }}
               title="Download"
@@ -263,6 +257,15 @@ function DocCard({ doc, onDelete, deleting }: DocCardProps) {
             </div>
           )}
         </div>
+        {doc.restrict_access && (
+          <span
+            className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold"
+            style={{ background: 'rgba(15,23,42,0.85)', color: '#fff' }}
+            title="Only the people and roles it was shared with can see this"
+          >
+            <Lock size={9} /> Restricted
+          </span>
+        )}
       </div>
 
       <div className="p-3">
@@ -272,9 +275,9 @@ function DocCard({ doc, onDelete, deleting }: DocCardProps) {
         <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
           {isLink ? 'Link' : formatBytes(doc.file_size)} · {fmtDate(doc.created_at)}
         </p>
-        {doc.uploaded_by && (
+        {(doc.uploaded_by || doc.uploaded_by_email) && (
           <p className="text-[10px] mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>
-            by {doc.uploaded_by.first_name} {doc.uploaded_by.last_name}
+            by {doc.uploaded_by ? `${doc.uploaded_by.first_name} ${doc.uploaded_by.last_name}` : doc.uploaded_by_email}
           </p>
         )}
       </div>
@@ -282,6 +285,7 @@ function DocCard({ doc, onDelete, deleting }: DocCardProps) {
       <div className="absolute top-2 right-2">
         <Button
           onClick={e => { e.stopPropagation(); setMenuOpen(v => !v); }}
+          aria-label="Document actions"
           className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
           style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(4px)' }}
         >
@@ -289,38 +293,74 @@ function DocCard({ doc, onDelete, deleting }: DocCardProps) {
         </Button>
         {menuOpen && (
           <div
-            className="absolute right-0 top-8 w-36 rounded-xl shadow-2xl z-20 overflow-hidden"
+            className="absolute right-0 top-8 w-44 rounded-xl shadow-2xl z-20 overflow-hidden"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
             onMouseLeave={() => setMenuOpen(false)}
           >
-            <a
-              href={isLink ? doc.file_url : viewUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 px-3 py-2.5 text-[12px] font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-              style={{ color: 'var(--text-primary)' }}
-            >
+            <Button onClick={() => { openPrimary(); setMenuOpen(false); }} className={menuItem} style={{ color: 'var(--text-primary)' }}>
               <Eye size={13} /> {isLink ? 'Open link' : 'View'}
-            </a>
-            {!isLink && (
-              <a
-                href={downloadUrl}
-                download
-                className="flex items-center gap-2 px-3 py-2.5 text-[12px] font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                <Download size={13} /> Download
-              </a>
-            )}
-            <Button
-              onClick={() => { onDelete(doc.id); setMenuOpen(false); }}
-              disabled={deleting}
-              className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            >
-              <Trash2 size={13} /> Delete
             </Button>
+            {!isLink && (
+              <Button onClick={() => { openFile('download'); setMenuOpen(false); }} className={menuItem} style={{ color: 'var(--text-primary)' }}>
+                <Download size={13} /> Download
+              </Button>
+            )}
+            {canManage && (
+              <Button onClick={() => { onManage(doc); setMenuOpen(false); }} className={menuItem} style={{ color: 'var(--text-primary)' }}>
+                <ShieldCheck size={13} /> Manage access
+              </Button>
+            )}
+            {canManage && (
+              <Button
+                onClick={() => { onDelete(doc.id); setMenuOpen(false); }}
+                disabled={deleting}
+                className={`${menuItem} !text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/20`}
+              >
+                <Trash2 size={13} /> Delete
+              </Button>
+            )}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Share dialog: used for new uploads and for "Manage access" ─── */
+interface ShareDialogProps {
+  projectId: number;
+  title: string;
+  items: string[];
+  initial: ShareValue;
+  confirmLabel: string;
+  busy: boolean;
+  onConfirm: (v: ShareValue) => void;
+  onClose: () => void;
+}
+
+function ShareDialog({ projectId, title, items, initial, confirmLabel, busy, onConfirm, onClose }: ShareDialogProps) {
+  const [value, setValue] = useState<ShareValue>(initial);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+          <p className="text-[14px] font-bold" style={{ color: 'var(--text-primary)' }}>{title}</p>
+          <Button onClick={onClose} aria-label="Close"><X size={15} style={{ color: 'var(--text-muted)' }} /></Button>
+        </div>
+        <div className="p-6 space-y-5 overflow-y-auto">
+          {items.length > 0 && (
+            <ul className="text-[12px] space-y-1 max-h-24 overflow-y-auto" style={{ color: 'var(--text-primary)' }}>
+              {items.map((n, i) => <li key={i} className="truncate">• {n}</li>)}
+            </ul>
+          )}
+          <ShareWithPicker projectId={projectId} value={value} onChange={setValue} noun="file" />
+        </div>
+        <div className="flex justify-end gap-3 px-6 py-4" style={{ borderTop: '1px solid var(--border-color)' }}>
+          <Button variant="ghost" onClick={onClose} disabled={busy}>Cancel</Button>
+          <Button variant="primary" onClick={() => onConfirm(value)} disabled={busy} className="!px-5 !h-10 !rounded-xl">
+            {busy ? 'Working…' : confirmLabel}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -336,6 +376,9 @@ export function ProjectDocumentsTab({ projectId }: ProjectDocumentsTabProps) {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [managing, setManaging] = useState<Document | null>(null);
+  const [savingShare, setSavingShare] = useState(false);
 
   const { data: docs = [], isLoading, refetch } = useQuery<Document[]>({
     queryKey: ['documents', projectId],
@@ -348,22 +391,45 @@ export function ProjectDocumentsTab({ projectId }: ProjectDocumentsTabProps) {
     (d.description ?? '').toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleUpload = async (files: FileList) => {
+  // Choosing files only stages them: the uploader decides who can see them in the dialog first.
+  const handleUpload = (files: FileList) => {
+    const picked = Array.from(files);
+    const tooBig = picked.filter(f => f.size > DOCUMENT_MAX_MB * 1024 * 1024);
+    tooBig.forEach(f => showToast('error', 'Too large', `${f.name} is over ${DOCUMENT_MAX_MB} MB.`));
+    const ok = picked.filter(f => f.size <= DOCUMENT_MAX_MB * 1024 * 1024);
+    if (ok.length) setPendingFiles(ok);
+  };
+
+  const confirmUpload = async (sharing: ShareValue) => {
     setUploading(true);
     let successCount = 0;
-    for (const file of Array.from(files)) {
+    for (const file of pendingFiles) {
       try {
-        await documentsService.createDocument(file, projectId, file.name);
+        await documentsService.createDocument(file, projectId, file.name, undefined, sharing);
         successCount++;
-      } catch {
-        showToast('error', 'Upload Failed', `Could not upload ${file.name}`);
+      } catch (e: any) {
+        showToast('error', 'Upload Failed', e?.response?.data?.message || `Could not upload ${file.name}`);
       }
     }
     setUploading(false);
+    setPendingFiles([]);
     if (successCount > 0) {
       showToast('success', 'Uploaded', `${successCount} file${successCount > 1 ? 's' : ''} uploaded successfully.`);
       refetch();
     }
+  };
+
+  const confirmManage = async (sharing: ShareValue) => {
+    if (!managing) return;
+    setSavingShare(true);
+    try {
+      await documentsService.updateSharing(managing.id, sharing);
+      showToast('success', 'Access updated', 'Who can see this file has been changed.');
+      setManaging(null);
+      refetch();
+    } catch (e: any) {
+      showToast('error', 'Error', e?.response?.data?.message || 'Could not change access.');
+    } finally { setSavingShare(false); }
   };
 
   const handleDelete = async (id: number) => {
@@ -434,8 +500,9 @@ export function ProjectDocumentsTab({ projectId }: ProjectDocumentsTabProps) {
             <input
               type="file"
               multiple
+              accept={DOCUMENT_ACCEPT}
               className="hidden"
-              onChange={e => e.target.files && handleUpload(e.target.files)}
+              onChange={e => { if (e.target.files) handleUpload(e.target.files); e.target.value = ''; }}
             />
           </label>
         </div>
@@ -478,8 +545,9 @@ export function ProjectDocumentsTab({ projectId }: ProjectDocumentsTabProps) {
               <input
                 type="file"
                 multiple
+                accept={DOCUMENT_ACCEPT}
                 className="hidden"
-                onChange={e => e.target.files && handleUpload(e.target.files)}
+                onChange={e => { if (e.target.files) handleUpload(e.target.files); e.target.value = ''; }}
               />
             </label>
           )}
@@ -492,10 +560,39 @@ export function ProjectDocumentsTab({ projectId }: ProjectDocumentsTabProps) {
               key={doc.id}
               doc={doc}
               onDelete={handleDelete}
+              onManage={setManaging}
               deleting={deletingId === doc.id}
             />
           ))}
         </div>
+      )}
+      {pendingFiles.length > 0 && (
+        <ShareDialog
+          projectId={projectId}
+          title={`Upload ${pendingFiles.length} file${pendingFiles.length > 1 ? 's' : ''}`}
+          items={pendingFiles.map(f => f.name)}
+          initial={EVERYONE}
+          confirmLabel="Upload"
+          busy={uploading}
+          onConfirm={confirmUpload}
+          onClose={() => !uploading && setPendingFiles([])}
+        />
+      )}
+      {managing && (
+        <ShareDialog
+          projectId={projectId}
+          title="Manage access"
+          items={[managing.title]}
+          initial={{
+            restrict_access: !!managing.restrict_access,
+            role_ids: managing.shared_role_ids ?? [],
+            user_ids: managing.shared_user_ids ?? [],
+          }}
+          confirmLabel="Save"
+          busy={savingShare}
+          onConfirm={confirmManage}
+          onClose={() => setManaging(null)}
+        />
       )}
       {showLinkModal && (
         <LinkModal

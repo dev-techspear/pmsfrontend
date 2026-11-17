@@ -13,6 +13,7 @@ import { PMSDataTable } from '@/components/data-display/PMSDataTable';
 import { ProjectReportTab } from '@/features/projects/components/ui/ProjectReportTab';
 import { ProjectDashboardTab } from '@/features/projects/components/ui/ProjectDashboardTab';
 import { ProjectDocumentsTab } from '@/features/projects/components/ui/ProjectDocumentsTab';
+import { ProjectCredentialsTab } from '@/features/projects/components/ui/ProjectCredentialsTab';
 import { TaskListTable } from '@/features/tasks/components/ui/TaskListTable';
 import { UserMultiSelect } from '@/components/core/UserMultiSelect';
 import { useToast } from '@/providers/ToastContext';
@@ -214,6 +215,7 @@ export function ProjectDetailView() {
         { label: 'Tasks' },
         { label: 'Reports' },
         { label: 'Documents' },
+        { label: 'Credentials' },
         { label: 'Milestones' },
         { label: 'Timesheet' },
         { label: 'Users' }
@@ -330,6 +332,10 @@ export function ProjectDetailView() {
 
                         {activeTab === 'Documents' && (
                             <ProjectDocumentsTab projectId={pid} />
+                        )}
+
+                        {activeTab === 'Credentials' && (
+                            <ProjectCredentialsTab projectId={pid} canCreate={can.editProject(user?.role)} />
                         )}
 
                         {activeTab === 'Milestones' && (
