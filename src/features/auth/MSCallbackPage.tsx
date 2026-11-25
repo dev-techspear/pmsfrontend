@@ -29,7 +29,7 @@ export function MSCallbackPage() {
       exchangedRef.current = true;
       exchangeCode(code);
     } else {
-      const errorDesc = searchParams.get('error_description');
+      const errorDesc = searchParams.get('error_description') || searchParams.get('error');
       setError(errorDesc || 'No authorization code found in redirect URL.');
     }
 
@@ -59,8 +59,7 @@ export function MSCallbackPage() {
       }
     } catch (err: any) {
       console.error('[SSO Callback Error]', err);
-      const detail = err.response?.data?.detail;
-      const message = typeof detail === 'string' ? detail : (err.message || 'Token exchange failed');
+      const message = err.response?.data?.message || err.response?.data?.detail || err.message || 'Token exchange failed';
       setError(message);
     }
   };

@@ -40,6 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
             setToken(null);
             setUser(null);
+            if (window.location.pathname !== ROUTES.LOGIN && window.location.pathname !== '/redirect') {
+                window.location.href = ROUTES.LOGIN;
+            }
         }
     }, []);
 

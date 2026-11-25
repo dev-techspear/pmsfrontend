@@ -1,7 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import logoIcon from '@/assets/techspear-logo-icon.png';
+import logoIcon from '../../assets/techspear-logo-icon.png';
 
 interface TechspearLoaderProps {
   /** Covers the whole viewport (route switches, auth checks). false = fills its parent

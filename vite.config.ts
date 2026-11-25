@@ -4,12 +4,23 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  server: { port: 3018, host: '0.0.0.0' },
+  server: {
+    port: 3018,
+    host: '0.0.0.0',
+    fs: {
+      allow: [
+        '..',
+        'F:/dev-techspear/Techspear',
+        'C:/Users/dipak/OneDrive/Documents/Claude/Projects/Techspear',
+      ],
+    },
+  },
   plugins: [
     react(),
     tailwindcss(),
   ],
   resolve: {
+    preserveSymlinks: true,
     alias: {
       '@': path.resolve(__dirname, './src'),
     },

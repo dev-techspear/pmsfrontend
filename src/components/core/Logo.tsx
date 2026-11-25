@@ -1,5 +1,5 @@
-import logoFull from '@/assets/techspear-logo-full.png';
-import logoIcon from '@/assets/techspear-logo-icon.png';
+import logoFull from '../../assets/techspear-logo-full.png';
+import logoIcon from '../../assets/techspear-logo-icon.png';
 
 interface LogoProps {
   className?: string;
