@@ -1,29 +1,62 @@
 export const THEME_COLORS = {
-    TEAL: 'hsl(160 60% 45%)',
-    BRAND_TEAL: '#14b8a6',
-    EMERALD: '#10b981',
-    RED: '#ef4444',
-    ORANGE: '#f97316',
-    AMBER: '#f59e0b',
-    SLATE: '#64748b',
+    // Techspear Brand Guidelines Core Tokens
+    BRAND_BLUE: '#04436E',
+    BRAND_BLUE_DEEP: '#032D5E',
+    BRAND_GREEN: '#2F833A',
+    BRAND_GREEN_DEEP: '#1F6B2E',
+    BRAND_LIME: '#84B424',
+    BRAND_LIME_DEEP: '#6D9A1F',
+    BRAND_TEAL: '#068799',
+    BRAND_TEAL_DEEP: '#04707F',
+
+    INK: '#0B1F33',
+    SLATE: '#5B6B7C',
+    BORDER: '#E3E9E6',
+    MIST: '#F5F8F6',
+    BLUE_TINT: '#E6EFF6',
+    GREEN_TINT: '#E8F3EA',
+
+    // Status colors
+    SUCCESS: '#2F833A',
+    INFO: '#04436E',
+    WARNING: '#B45309',
+    DANGER: '#C62828',
+
+    // Backward-compatible aliases
+    TEAL: '#04436E',
+    EMERALD: '#2F833A',
+    RED: '#C62828',
+    ORANGE: '#B45309',
+    AMBER: '#B45309',
 };
 
+// Section 5 Brand Guidelines: Charts in this order: Blue, Green, Teal, Lime, Slate, then tints
+export const BRAND_CHART_COLORS = [
+    '#04436E', // Blue
+    '#2F833A', // Green
+    '#068799', // Teal
+    '#84B424', // Lime
+    '#5B6B7C', // Slate
+    '#E6EFF6', // Blue tint
+    '#E8F3EA', // Green tint
+];
+
 export const PRIORITY_COLORS: Record<string, string> = {
-    critical: '#991b1b',
-    high: '#9a3412',
-    medium: '#854d0e',
-    low: '#166534',
-    none: '#6b7280',
+    critical: '#C62828',
+    high: '#B45309',
+    medium: '#04436E',
+    low: '#2F833A',
+    none: '#5B6B7C',
 };
 
 export const SEVERITY_COLORS: Record<string, string> = {
-    critical: '#ef4444',
-    high: '#f97316',
-    medium: '#eab308',
-    low: '#22c55e',
-    normal: '#64748b',
-    blocker: '#b91c1c',
-    'show stopper': '#7f1d1d',
+    critical: '#C62828',
+    high: '#B45309',
+    medium: '#04436E',
+    low: '#2F833A',
+    normal: '#5B6B7C',
+    blocker: '#C62828',
+    'show stopper': '#8B0000',
 };
 
 export const ISSUE_CLASSIFICATIONS = [

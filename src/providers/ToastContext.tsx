@@ -60,10 +60,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
     const getStyles = (type: ToastType) => {
         switch (type) {
-            case 'success': return { bg: '#f0fdfa', border: '#14b8a6', text: '#0f172a', icon: '#0d9488' };
-            case 'error': return { bg: '#fef2f2', border: '#ef4444', text: '#0f172a', icon: '#dc2626' };
-            case 'warning': return { bg: '#fffbeb', border: '#f59e0b', text: '#0f172a', icon: '#d97706' };
-            case 'info': return { bg: '#f0f9ff', border: '#3b82f6', text: '#0f172a', icon: '#2563eb' };
+            case 'success': return { bg: '#E8F3EA', border: '#2F833A', text: '#0B1F33', icon: '#1F6B2E' };
+            case 'error': return { bg: '#FEE2E2', border: '#C62828', text: '#0B1F33', icon: '#C62828' };
+            case 'warning': return { bg: '#FEF3C7', border: '#B45309', text: '#0B1F33', icon: '#B45309' };
+            case 'info': return { bg: '#E6EFF6', border: '#04436E', text: '#0B1F33', icon: '#04436E' };
         }
     };
 

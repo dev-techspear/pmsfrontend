@@ -66,16 +66,16 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-[#06111f] text-slate-100 selection:bg-[#c4e538] selection:text-slate-950 font-sans">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#06111f] text-slate-100 selection:bg-[#84B424] selection:text-[#0B1F33] font-sans">
       <AnimatePresence>
         {isSubmitting && <TechspearLoader key="signin-loader" label="Signing in" />}
       </AnimatePresence>
 
-      {/* ================= LEFT BRAND & HERO COLUMN (Shared with Leads, Mail & SIMS) ================= */}
-      <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#0a2540] via-[#0b3350] to-[#0b4a3a] p-12 lg:p-14 text-white relative overflow-hidden border-r border-slate-800/60">
-        {/* Glow blur orbs */}
-        <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[#c4e538]/10 blur-3xl pointer-events-none" />
-        <div className="absolute -left-16 bottom-0 h-80 w-80 rounded-full bg-teal-500/20 blur-3xl pointer-events-none" />
+      {/* ================= LEFT BRAND & HERO COLUMN (Brand Guidelines Aligned) ================= */}
+      <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#04436E] via-[#032D5E] to-[#0A6A74] p-12 lg:p-14 text-white relative overflow-hidden border-r border-slate-800/60">
+        {/* Glow blur orbs: Brand Lime & Brand Teal */}
+        <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[#84B424]/10 blur-3xl pointer-events-none" />
+        <div className="absolute -left-16 bottom-0 h-80 w-80 rounded-full bg-[#068799]/20 blur-3xl pointer-events-none" />
 
         {/* Brand Header */}
         <div className="relative z-10 flex items-center gap-3">
@@ -85,7 +85,7 @@ export function LoginPage() {
 
         {/* Center: Brand Typography & Value Props */}
         <div className="relative z-10 my-auto max-w-lg space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-[#c4e538] text-xs font-semibold uppercase tracking-wider border border-white/10 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-[#84B424] text-xs font-semibold uppercase tracking-wider border border-white/10 backdrop-blur-sm">
             <Layers className="w-3.5 h-3.5" />
             <span>Project Management System</span>
           </div>
@@ -102,21 +102,21 @@ export function LoginPage() {
           {/* Capabilities Grid */}
           <div className="pt-2 space-y-3 border-t border-white/10 text-xs sm:text-sm text-slate-200">
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-[#c4e538] shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#84B424] shrink-0" />
               <span>Microsoft Entra ID Corporate SSO & Spear ID</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-[#c4e538] shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#84B424] shrink-0" />
               <span>Interactive Sprint Kanban, Gantt & Milestone Tracking</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-[#c4e538] shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#84B424] shrink-0" />
               <span>Role-Gated Financial Governance & Timesheets</span>
             </div>
           </div>
 
-          <p className="pt-2 text-xs uppercase tracking-[0.25em] text-[#c4e538] font-bold">
-            Innovate · Inspire · Impact
+          <p className="pt-2 text-xs uppercase tracking-[0.25em] text-[#84B424] font-bold">
+            Innovate • Inspire • Impact
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export function LoginPage() {
         <div className="hidden lg:flex items-center justify-end text-xs text-slate-400 max-w-md mx-auto w-full mb-4">
           <div>
             <span>IT Helpdesk: </span>
-            <a href="mailto:support@techspear.in" className="text-[#c4e538] hover:underline font-medium">
+            <a href="mailto:support@techspear.in" className="text-[#84B424] hover:underline font-medium">
               support@techspear.in
             </a>
           </div>
@@ -229,7 +229,7 @@ export function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.com"
-                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#071322] border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-colors"
+                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#071322] border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#04436E] focus:ring-1 focus:ring-[#04436E] transition-colors"
                   />
                 </div>
               </div>
@@ -241,7 +241,7 @@ export function LoginPage() {
                   </label>
                   <a
                     href="mailto:support@techspear.in?subject=Password%20Reset%20Request%20-%20PMS"
-                    className="text-[11px] font-medium text-teal-400 hover:text-teal-300 hover:underline"
+                    className="text-[11px] font-medium text-blue-400 hover:text-blue-300 hover:underline"
                   >
                     Forgot password?
                   </a>
@@ -256,7 +256,7 @@ export function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#071322] border border-slate-700 text-white placeholder-slate-500 text-sm font-mono focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-colors"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#071322] border border-slate-700 text-white placeholder-slate-500 text-sm font-mono focus:outline-none focus:border-[#04436E] focus:ring-1 focus:ring-[#04436E] transition-colors"
                   />
                   <button
                     type="button"
@@ -273,10 +273,10 @@ export function LoginPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || isClicked || !email.trim() || !password}
-                className="w-full h-11 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-semibold text-sm tracking-wide flex items-center justify-center gap-2 mt-2 transition-all duration-150 shadow-lg disabled:opacity-50 cursor-pointer"
+                className="w-full h-11 rounded-[6px] bg-[#04436E] hover:bg-[#032D5E] text-white font-semibold text-sm tracking-wide flex items-center justify-center gap-2 mt-2 transition-all duration-150 shadow-md disabled:opacity-50 cursor-pointer"
               >
                 {isSubmitting ? (
-                  <div className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   'Sign in with Password'
                 )}
@@ -285,7 +285,7 @@ export function LoginPage() {
 
             <div className="mt-6 border-t border-slate-700/60 pt-4 text-center text-xs text-slate-400">
               <span>New commercial partner or freelancer? </span>
-              <Link to={ROUTES.REGISTER} className="font-semibold text-teal-400 hover:text-teal-300 hover:underline">
+              <Link to={ROUTES.REGISTER} className="font-semibold text-blue-400 hover:text-blue-300 hover:underline">
                 Create an account
               </Link>
             </div>

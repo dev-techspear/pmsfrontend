@@ -181,7 +181,7 @@ export function Dashboard() {
         const n = getVal(p.status_master || p.status || 'Planning');
         pStats[n] = (pStats[n] || 0) + 1;
       });
-      const pColors = ['#14B8A6', '#6366F1', '#8B5CF6', '#F59E0B', '#EC4899', '#0EA5E9'];
+      const pColors = ['#04436E', '#2F833A', '#068799', '#84B424', '#5B6B7C', '#E6EFF6'];
       setPhaseStatusData(Object.entries(pStats).map(([name, value], i) => ({ name, value, color: pColors[i % pColors.length] })));
 
 
@@ -204,8 +204,8 @@ export function Dashboard() {
           iStats['Medium'] = (iStats['Medium'] || 0) + 1;
         }
       });
-      const iColors: Record<string, string> = { Critical: '#EF4444', High: '#F97316', Medium: '#F59E0B', Low: '#3B82F6' };
-      setIssueSeverityData(Object.entries(iStats).map(([severity, count]) => ({ severity, count, fill: iColors[severity] || '#8B5CF6' })));
+      const iColors: Record<string, string> = { Critical: '#C62828', High: '#B45309', Medium: '#04436E', Low: '#2F833A' };
+      setIssueSeverityData(Object.entries(iStats).map(([severity, count]) => ({ severity, count, fill: iColors[severity] || '#5B6B7C' })));
 
       const completionRate = summary.total_tasks > 0
         ? Math.round((summary.completed_tasks / summary.total_tasks) * 100) : 0;
@@ -226,11 +226,11 @@ export function Dashboard() {
       setProjectTaskProgressData(activeProjectsWithTasks);
 
       const kpiDefs = [
-        { title: 'Active Projects', value: String(summary.active_projects || 0), change: `${summary.total_projects || 0} total projects`, trend: 'up', icon: <FolderKanban className="w-5 h-5" />, gradient: '#14b8a6' },
-        { title: 'Total Tasks', value: String(summary.total_tasks || 0), change: `${summary.completed_tasks || 0} completed`, trend: 'up', icon: <CheckCircle className="w-5 h-5" />, gradient: '#8B5CF6' },
-        { title: 'Open Issues', value: String(summary.open_issues || 0), change: 'Requires attention', trend: 'down', icon: <AlertCircle className="w-5 h-5" />, gradient: '#EF4444' },
-        { title: 'Hours Logged', value: (summary.total_hours_logged || 0).toFixed(1), change: 'This period', trend: 'up', icon: <Clock className="w-5 h-5" />, gradient: '#3B82F6' },
-        { title: 'Completion Rate', value: `${completionRate}%`, change: `${summary.completed_tasks || 0}/${summary.total_tasks || 0} tasks done`, trend: completionRate >= 50 ? 'up' : 'down', icon: <TrendingUp className="w-5 h-5" />, gradient: '#10B981' },
+        { title: 'Active Projects', value: String(summary.active_projects || 0), change: `${summary.total_projects || 0} total projects`, trend: 'up', icon: <FolderKanban className="w-5 h-5" />, gradient: '#04436E' },
+        { title: 'Total Tasks', value: String(summary.total_tasks || 0), change: `${summary.completed_tasks || 0} completed`, trend: 'up', icon: <CheckCircle className="w-5 h-5" />, gradient: '#2F833A' },
+        { title: 'Open Issues', value: String(summary.open_issues || 0), change: 'Requires attention', trend: 'down', icon: <AlertCircle className="w-5 h-5" />, gradient: '#C62828' },
+        { title: 'Hours Logged', value: (summary.total_hours_logged || 0).toFixed(1), change: 'This period', trend: 'up', icon: <Clock className="w-5 h-5" />, gradient: '#068799' },
+        { title: 'Completion Rate', value: `${completionRate}%`, change: `${summary.completed_tasks || 0}/${summary.total_tasks || 0} tasks done`, trend: completionRate >= 50 ? 'up' : 'down', icon: <TrendingUp className="w-5 h-5" />, gradient: '#84B424' },
       ];
       setKpiCards(kpiDefs as any);
     } catch (e) {
@@ -320,32 +320,32 @@ export function Dashboard() {
           <Card glass={true} className="xl:col-span-2 p-0 flex flex-col h-full border-slate-200/50 dark:border-slate-800">
             <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800/60 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20">
               <div className="flex items-center gap-2.5">
-                <div className="w-1.5 h-4 bg-teal-500 rounded-full"></div>
+                <div className="w-1.5 h-4 bg-[#04436E] rounded-full"></div>
                 <h3 className="text-[13px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-widest">Active Project Progress</h3>
               </div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-md">Live Sync</span>
             </div>
             <div className="p-5 flex-1 flex flex-col justify-center">
-              {loading ? <div className="h-[260px] flex items-center justify-center"><i className="pi pi-spin pi-spinner text-teal-500 text-3xl" /></div> : (
+              {loading ? <div className="h-[260px] flex items-center justify-center"><i className="pi pi-spin pi-spinner text-[#04436E] text-3xl" /></div> : (
                 <ResponsiveContainer width="100%" height={260}>
                   <AreaChart data={projectTaskProgressData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#94a3b8" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#5B6B7C" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#5B6B7C" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.1} />
+                        <stop offset="5%" stopColor="#04436E" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#04436E" stopOpacity={0.1} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#33415510" vertical={false} />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 600, fill: '#64748b' }} axisLine={false} tickLine={false} dy={10} />
-                    <YAxis tick={{ fontSize: 11, fontWeight: 500, fill: '#64748b' }} axisLine={false} tickLine={false} dx={-10} allowDecimals={false} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 600, fill: '#5B6B7C' }} axisLine={false} tickLine={false} dy={10} />
+                    <YAxis tick={{ fontSize: 11, fontWeight: 500, fill: '#5B6B7C' }} axisLine={false} tickLine={false} dx={-10} allowDecimals={false} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '11px', fontWeight: 600, paddingTop: '20px' }} />
-                    <Area type="monotone" dataKey="total" name="Total Tasks" stroke="#94a3b8" strokeWidth={3} fillOpacity={1} fill="url(#colorTotal)" />
-                    <Area type="monotone" dataKey="completed" name="Completed Tasks" stroke="#14b8a6" strokeWidth={3} fillOpacity={1} fill="url(#colorCompleted)" />
+                    <Area type="monotone" dataKey="total" name="Total Tasks" stroke="#5B6B7C" strokeWidth={3} fillOpacity={1} fill="url(#colorTotal)" />
+                    <Area type="monotone" dataKey="completed" name="Completed Tasks" stroke="#04436E" strokeWidth={3} fillOpacity={1} fill="url(#colorCompleted)" />
                   </AreaChart>
                 </ResponsiveContainer>
               )}

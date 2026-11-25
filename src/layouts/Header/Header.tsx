@@ -21,10 +21,10 @@ function getTypeIcon(type: string) {
 
 function getTypeColor(type: string) {
   switch (type) {
-    case 'project': return '#14b8a6';
+    case 'project': return '#04436E';
     case 'task': return '#0284C7';
-    case 'issue': return '#DC2626';
-    default: return '#6B7280';
+    case 'issue': return '#C62828';
+    default: return '#5B6B7C';
   }
 }
 
@@ -127,7 +127,7 @@ export function Header() {
               <div className="absolute top-full left-0 right-0 mt-1.5 rounded-[12px] overflow-hidden z-[100] max-h-[400px] overflow-y-auto animate-fade-in" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)', boxShadow: '0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06)' }}>
                 {isLoading ? (
                   <div className="p-4 text-center text-[#6B7280]">
-                    <div className="animate-spin w-5 h-5 border-2 border-[#14b8a6] border-t-transparent rounded-full mx-auto mb-2"></div>
+                    <div className="animate-spin w-5 h-5 border-2 border-[#04436E] border-t-transparent rounded-full mx-auto mb-2"></div>
                     <span className="text-[13px]">Searching...</span>
                   </div>
                 ) : results.length > 0 ? (

@@ -1,9 +1,9 @@
 import React from 'react';
 
 const AVATAR_COLORS = [
-    '#14b8a6', '#0891B2', '#7C3AED', '#DB2777', '#D97706',
-    '#2563EB', '#DC2626', '#4F46E5', '#0D9488', '#9333EA',
-    '#EA580C', '#16A34A', '#0284C7', '#C026D3', '#CA8A04',
+    '#04436E', '#2F833A', '#068799', '#032D5E', '#1F6B2E',
+    '#04707F', '#5B6B7C', '#0B1F33', '#166534', '#0284C7',
+    '#0F766E', '#1E40AF', '#374151', '#15803D', '#0369A1',
 ];
 
 function getColorFromName(name: string): string {

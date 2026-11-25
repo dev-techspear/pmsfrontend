@@ -1,9 +1,11 @@
-$primary: #14b8a6;
-$primary-hover: #0d9488;
-$primary-light: #f0fdfa;
-$danger: #ef4444;
-$danger-hover: #dc2626;
-$radius: 10px;
+$primary: #04436E;
+$primary-hover: #032D5E;
+$primary-light: #E6EFF6;
+$success: #2F833A;
+$success-hover: #1F6B2E;
+$danger: #C62828;
+$danger-hover: #B71C1C;
+$radius: 8px;
 
 .text-theme {
     &-primary {
@@ -1601,8 +1603,8 @@ table {
             flex-shrink: 0;
 
             &:hover:not(:disabled) {
-                background: rgba(45, 212, 191, 0.08) !important;
-                color: #14b8a6 !important;
+                background: rgba(4, 67, 110, 0.12) !important;
+                color: var(--primary) !important;
             }
         }
     }
@@ -1635,8 +1637,8 @@ table {
 
     .p-highlight .p-step-number,
     .p-stepper-header.p-highlight .p-Button {
-        background: #14b8a6 !important;
-        border-color: #14b8a6 !important;
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
         color: #ffffff !important;
     }
 
