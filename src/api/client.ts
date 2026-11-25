@@ -15,12 +15,16 @@ import {
     EVENTS
 } from '@/constants/constants';
 
+function resolveApiUrl(raw?: string): string {
+    const defaultProd = 'https://project-api-d2g8dreue5aackhn.southindia-01.azurewebsites.net/api/v1';
+    const defaultDev = 'http://localhost:8000/api/v1';
+    const target = raw || (import.meta.env.PROD ? defaultProd : defaultDev);
+    const trimmed = target.trim().replace(/\/+$/, '');
+    return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+}
+
 export const api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL 
-        || import.meta.env.VITE_API_BASE_URL 
-        || (import.meta.env.PROD 
-            ? 'https://trucszohoreplica.azurewebsites.net/api/v1' 
-            : 'http://localhost:8000/api/v1'),
+    baseURL: resolveApiUrl(import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL),
     timeout: 30_000,
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },

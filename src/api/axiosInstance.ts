@@ -17,14 +17,16 @@ const TOKEN_KEY = 'pms_token';
  * Mixed-content prevention: the production URL enforces https:// so browsers
  * never block API requests from the Azure Static Web App (https://) origin.
  */
-const PROD_API_URL = 'https://trucszohoreplica.azurewebsites.net/api/v1';
+const PROD_API_URL = 'https://project-api-d2g8dreue5aackhn.southindia-01.azurewebsites.net/api/v1';
 const DEV_API_URL  = 'http://localhost:8000/api/v1';
 
-const BASE_URL: string =
-    import.meta.env.VITE_API_URL          // Explicit override always wins
-    ?? (import.meta.env.PROD              // Vite build-time flag
-        ? PROD_API_URL
-        : DEV_API_URL);
+function resolveBaseUrl(raw?: string): string {
+    const target = raw || (import.meta.env.PROD ? PROD_API_URL : DEV_API_URL);
+    const trimmed = target.trim().replace(/\/+$/, '');
+    return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+}
+
+const BASE_URL: string = resolveBaseUrl(import.meta.env.VITE_API_URL);
 
 // ── Base API Instance ─────────────────────────────────────────────────────
 export const api = axios.create({
