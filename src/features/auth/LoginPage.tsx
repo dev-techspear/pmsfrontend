@@ -22,9 +22,9 @@ export function LoginPage() {
 
   const handleMSLogin = () => {
     setIsClicked(true);
-    const tenant = import.meta.env.VITE_AZURE_TENANT_ID;
-    const client = import.meta.env.VITE_AZURE_CLIENT_ID;
-    const redirect = import.meta.env.VITE_AZURE_REDIRECT_URI;
+    const tenant = import.meta.env.VITE_AZURE_TENANT_ID || 'db500ec9-5b8f-464c-ba7a-a39285f09fee';
+    const client = import.meta.env.VITE_AZURE_CLIENT_ID || 'b3dde9b8-1fb8-4ea0-9281-d38b1dc246bf';
+    const redirect = import.meta.env.VITE_AZURE_REDIRECT_URI || `${window.location.origin}/redirect`;
 
     const scope = 'openid profile email User.Read';
     const authUrl = `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/authorize?client_id=${client}&response_type=code&redirect_uri=${encodeURIComponent(redirect)}&response_mode=query&scope=${encodeURIComponent(scope)}`;

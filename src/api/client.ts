@@ -16,7 +16,11 @@ import {
 } from '@/constants/constants';
 
 export const api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL,
+    baseURL: import.meta.env.VITE_API_URL 
+        || import.meta.env.VITE_API_BASE_URL 
+        || (import.meta.env.PROD 
+            ? 'https://trucszohoreplica.azurewebsites.net/api/v1' 
+            : 'http://localhost:8000/api/v1'),
     timeout: 30_000,
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },
