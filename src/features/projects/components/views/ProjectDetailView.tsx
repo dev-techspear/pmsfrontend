@@ -14,6 +14,10 @@ import { ProjectReportTab } from '@/features/projects/components/ui/ProjectRepor
 import { ProjectDashboardTab } from '@/features/projects/components/ui/ProjectDashboardTab';
 import { ProjectDocumentsTab } from '@/features/projects/components/ui/ProjectDocumentsTab';
 import { ProjectCredentialsTab } from '@/features/projects/components/ui/ProjectCredentialsTab';
+import { ProjectLinksNotesTab } from '@/features/projects/components/ui/ProjectLinksNotesTab';
+import { projectLinksService } from '@/api/services/projectLinksNotes.service';
+import { HEADER_LINK_TYPES } from '@/features/projects/constants/sharing';
+import { useQuery } from '@tanstack/react-query';
 import { TaskListTable } from '@/features/tasks/components/ui/TaskListTable';
 import { UserMultiSelect } from '@/components/core/UserMultiSelect';
 import { useToast } from '@/providers/ToastContext';
@@ -195,6 +199,13 @@ export function ProjectDetailView() {
 
     const { updateProject, assignUser, removeUser } = useProjectActions();
 
+    // Repo / live-site links show as quick chips in the header (same query the Links & Notes tab uses).
+    const { data: headerLinks = [] } = useQuery({
+        queryKey: ['project-links', pid],
+        queryFn: () => projectLinksService.list(pid),
+        enabled: !!pid,
+    });
+
     const handleArchive = async () => {
         await updateProject.mutateAsync({ id: pid, data: { is_archived: !project?.is_archived } });
     };
@@ -215,6 +226,7 @@ export function ProjectDetailView() {
         { label: 'Tasks' },
         { label: 'Reports' },
         { label: 'Documents' },
+        { label: 'Links & Notes' },
         { label: 'Credentials' },
         { label: 'Milestones' },
         { label: 'Timesheet' },
@@ -233,7 +245,14 @@ export function ProjectDetailView() {
                 ]}
                 metadata={[
                     <span key="manager" className="flex items-center gap-1"><UserCircle size={12} /> {project.project_manager ? [project.project_manager.first_name, project.project_manager.last_name].filter(Boolean).join(' ') : 'No Manager'}</span>,
-                    <span key="date" className="flex items-center gap-1"><Calendar size={12} /> Ends: {project.expected_end_date || '—'}</span>
+                    <span key="date" className="flex items-center gap-1"><Calendar size={12} /> Ends: {project.expected_end_date || '—'}</span>,
+                    ...headerLinks
+                        .filter(l => (HEADER_LINK_TYPES as readonly string[]).includes(l.link_type))
+                        .map(l => (
+                            <a key={`link-${l.id}`} href={l.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline" title={l.url}>
+                                {l.link_type === 'Repo' ? 'Repo' : 'Live'} ↗
+                            </a>
+                        )),
                 ]}
                 headerActions={
                     <div className="flex items-center gap-2">
@@ -332,6 +351,10 @@ export function ProjectDetailView() {
 
                         {activeTab === 'Documents' && (
                             <ProjectDocumentsTab projectId={pid} />
+                        )}
+
+                        {activeTab === 'Links & Notes' && (
+                            <ProjectLinksNotesTab projectId={pid} canAddLinks={can.editProject(user?.role)} />
                         )}
 
                         {activeTab === 'Credentials' && (

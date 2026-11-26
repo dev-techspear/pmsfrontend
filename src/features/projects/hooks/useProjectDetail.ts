@@ -23,7 +23,7 @@ export function useProjectDetail(projectId: number | undefined) {
 
     const tasks = useQuery({
         queryKey: [...projectKeys.detail(projectId!), 'tasks'],
-        queryFn: () => tasksService.getTasks({ project_id: projectId, skip: 0, limit: 200 }),
+        queryFn: () => tasksService.getTasks({ project_id: projectId, skip: 0, limit: 200, top_level_only: true }),
         enabled,
         staleTime: STALE,
     });
