@@ -239,12 +239,12 @@ export function LoginPage() {
                   <label htmlFor="login-password" className="block text-xs font-semibold text-slate-300">
                     Password
                   </label>
-                  <a
-                    href="mailto:support@techspear.in?subject=Password%20Reset%20Request%20-%20PMS"
+                  <Link
+                    to="/forgot-password"
                     className="text-[11px] font-medium text-blue-400 hover:text-blue-300 hover:underline"
                   >
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />

@@ -112,11 +112,15 @@ export const AUTH_ENDPOINTS = {
     ME: '/auth/me',
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
 } as const;
 
 export const ROUTES = {
     LOGIN: '/login',
     REGISTER: '/register',
+    FORGOT_PASSWORD: '/forgot-password',
+    RESET_PASSWORD: '/reset-password',
     DASHBOARD: '/',
 } as const;
 
