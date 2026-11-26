@@ -119,7 +119,8 @@ export function TaskEditView() {
           status_id: task.status_id || null,
           priority_id: task.priority_id || null,
 
-          owners: task.owners || [],
+          // Older tasks may only have the single assignee set; show them so saving does not clear the assignment.
+          owners: task.owners?.length ? task.owners : (task.assignee ? [task.assignee] : []),
           start_date: task.start_date ? new Date(task.start_date) : null,
           due_date: task.due_date ? new Date(task.due_date) : null,
           completion_date: task.completion_date ? new Date(task.completion_date) : null,
