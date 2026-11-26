@@ -39,4 +39,15 @@ export const authService = {
         const res = await api.post<{ message: string }>(AUTH_ENDPOINTS.REGISTER, payload);
         return res.data.message;
     },
+
+    /** Always resolves with the same message for any email; rejects (503) only when e-mail is not set up. */
+    async forgotPassword(email: string): Promise<string> {
+        const res = await api.post<{ message: string }>(AUTH_ENDPOINTS.FORGOT_PASSWORD, { email });
+        return res.data.message;
+    },
+
+    async resetPassword(token: string, newPassword: string): Promise<string> {
+        const res = await api.post<{ message: string }>(AUTH_ENDPOINTS.RESET_PASSWORD, { token, new_password: newPassword });
+        return res.data.message;
+    },
 };
