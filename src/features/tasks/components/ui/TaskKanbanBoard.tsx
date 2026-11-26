@@ -101,6 +101,11 @@ function KanbanCard({ task }: KanbanCardProps) {
                         {task.task_name}
                     </p>
                     <Tooltip target=".task-kanban-title" />
+                    {(task.subtask_count ?? 0) > 0 && (
+                        <span className="text-[10px] font-bold" style={{ color: TEAL }} title="Sub-tasks done">
+                            ↳ {task.subtasks_done ?? 0}/{task.subtask_count} sub-tasks
+                        </span>
+                    )}
 
                     <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div

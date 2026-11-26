@@ -571,6 +571,14 @@ export function TaskListTable({
                                         >
                                             {r.task_name}
                                         </span>
+                                        {r.parent_task_id && (
+                                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase flex-shrink-0" style={{ background: 'var(--bg-secondary)', color: 'var(--text-muted)' }} title="This is a sub-task">Sub-task</span>
+                                        )}
+                                        {(r.subtask_count ?? 0) > 0 && (
+                                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold flex-shrink-0" style={{ background: 'hsl(160 60% 45% / 0.12)', color: 'hsl(160 60% 35%)' }} title={`${r.subtasks_done ?? 0} of ${r.subtask_count} sub-tasks done`}>
+                                                ↳ {r.subtasks_done ?? 0}/{r.subtask_count}
+                                            </span>
+                                        )}
                                         {isOverdue && (
                                             <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 flex-shrink-0">Overdue</span>
                                         )}

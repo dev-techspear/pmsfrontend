@@ -9,7 +9,11 @@ export interface Task {
     assignee_id: number | null;
     owner_id: number | null;
     created_by_id: number | null;
-    parent_id?: number | null;
+    /** Set on a sub-task. Tasks nest two levels only: a sub-task has no sub-tasks of its own. */
+    parent_task_id?: number | null;
+    subtask_count?: number;
+    subtasks_done?: number;
+    subtasks_hours?: number;
     status_id?: number | null;
     priority_id?: number | null;
     status: any | null;

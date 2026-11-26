@@ -11,6 +11,21 @@ export const CREDENTIAL_TYPES = [
 ] as const;
 
 export const SECRET_AUTO_HIDE_MS = 30_000;
+
+export const LINK_TYPES = [
+    { value: 'Repo', label: 'Repository' },
+    { value: 'Live', label: 'Live site' },
+    { value: 'Staging', label: 'Staging' },
+    { value: 'Design', label: 'Design' },
+    { value: 'Docs', label: 'Docs' },
+    { value: 'Other', label: 'Other' },
+] as const;
+/** Link types shown as quick chips in the project header. */
+export const HEADER_LINK_TYPES = ['Repo', 'Live'] as const;
+export const NOTE_MAX_LENGTH = 10_000;
+export const SUBTASK_NAME_MAX = 200;
+export const STATUS_COMPLETED = 'completed';
+export const STATUS_OPEN = 'open';
 export const DOCUMENT_MAX_MB = 25;
 export const DOCUMENT_ACCEPT =
     '.png,.jpg,.jpeg,.gif,.webp,.pdf,.txt,.csv,.md,.json,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip';

@@ -22,6 +22,7 @@ import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { PriorityBadge } from '@/components/data-display/PriorityBadge';
 import { PersonAvatar } from '@/components/data-display/PersonAvatar';
 import { LogTimeInline } from '@/features/timelogs/components/ui/LogTimeInline';
+import { SubtasksPanel } from '@/features/tasks/components/ui/SubtasksPanel';
 
 const TEAL = 'hsl(160 60% 45%)';
 import { useAuth } from '@/auth/AuthProvider';
@@ -43,13 +44,12 @@ export function TaskDetailView() {
     const [searchParams, setSearchParams] = useSearchParams();
     const location = useLocation();
     const id = parseInt(taskId ?? '0', 10);
-    const activeTab = searchParams.get('tab') || 'Time Logs';
 
     const { data: task, isLoading } = useTask(id);
 
     const { data: siblingsRes, isLoading: siblingsLoading } = useQuery({
         queryKey: ['tasks', 'siblings', task?.project_id],
-        queryFn: () => tasksService.getTasks({ project_id: task?.project_id, limit: 100 }),
+        queryFn: () => tasksService.getTasks({ project_id: task?.project_id, limit: 100, top_level_only: true }),
         enabled: !!task?.project_id,
     });
 
@@ -133,7 +133,14 @@ export function TaskDetailView() {
         }
     ];
 
+    const isSubtask = !!task.parent_task_id;
     const tabs = [
+        // Tasks nest two levels only, so a sub-task has no Sub-tasks tab of its own.
+        ...(isSubtask ? [] : [{
+            label: 'Sub-tasks',
+            content: <SubtasksPanel parent={task} canCreate={can.createTask(user?.role)} canEdit={can.updateTask(user?.role)} />,
+            count: task.subtask_count ?? 0
+        }]),
         {
             label: 'Time Logs',
             content: (
@@ -174,7 +181,10 @@ export function TaskDetailView() {
     return (
         <ZohoEntityDetailLayout
             title={task.task_name}
-            subtitle={<Link to={`/projects/${task.project_id}`} className="hover:underline">{projectName}</Link>}
+            subtitle={<span>
+                <Link to={`/projects/${task.project_id}`} className="hover:underline">{projectName}</Link>
+                {isSubtask && <> · sub-task of <Link to={`/tasks/${task.parent_task_id}`} className="hover:underline font-semibold">parent task</Link></>}
+            </span>}
             identifier={task.public_id}
             entityType="Task"
             status={task.status_master || task.status}
@@ -182,7 +192,7 @@ export function TaskDetailView() {
             sidebarItems={sidebarItems}
             sidebarLoading={siblingsLoading}
             onSidebarItemClick={(id) => navigate(`/tasks/${id}${window.location.search}`, { replace: true })}
-            activeTab={activeTab}
+            activeTab={searchParams.get('tab') || (!isSubtask && (task.subtask_count ?? 0) > 0 ? 'Sub-tasks' : 'Time Logs')}
             onTabChange={(tab) => setSearchParams({ tab })}
             infoSections={infoSections}
             tabs={tabs}
