@@ -1,5 +1,5 @@
 import { api } from '@/api/client';
-import { AUTH_ENDPOINTS } from '@/constants/constants';
+import { AUTH_ENDPOINTS, STORAGE_KEYS } from '@/constants/constants';
 import type { AuthUser } from '@/auth/AuthProvider';
 
 export interface LoginPayload {
@@ -46,8 +46,19 @@ export const authService = {
         return res.data.message;
     },
 
+    /**
+     * Changes the password. The server then ends every session of the account (old tokens are refused),
+     * so this browser's stored login is cleared too.
+     */
     async resetPassword(token: string, newPassword: string): Promise<string> {
         const res = await api.post<{ message: string }>(AUTH_ENDPOINTS.RESET_PASSWORD, { token, new_password: newPassword });
+        authService.clearStoredSession();
         return res.data.message;
+    },
+
+    /** Forgets the login kept in this browser (the same keys the app clears on sign-out). */
+    clearStoredSession(): void {
+        [STORAGE_KEYS.TOKEN, STORAGE_KEYS.REFRESH_TOKEN, STORAGE_KEYS.USER, STORAGE_KEYS.USER_DATA]
+            .forEach((key) => localStorage.removeItem(key));
     },
 };
