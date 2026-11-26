@@ -77,9 +77,13 @@ export function ResetPasswordPage() {
                 <h1 className="auth-title">Password changed</h1>
                 <p className="auth-subtitle">{doneMessage}</p>
               </div>
-              <Link to={ROUTES.LOGIN} className="auth-submit-btn auth-submit-link">
+              <p className="auth-hint" style={{ textAlign: 'center', marginBottom: 16 }}>
+                For your security you have been signed out of all devices.
+              </p>
+              {/* A full page load (not a client-side link) so the app starts with no leftover session. */}
+              <a href={ROUTES.LOGIN} className="auth-submit-btn auth-submit-link">
                 Sign in
-              </Link>
+              </a>
             </>
           ) : noToken || linkProblem ? (
             <>
