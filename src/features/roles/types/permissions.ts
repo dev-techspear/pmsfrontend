@@ -44,4 +44,5 @@ export const availablePermissions: Permission[] = [
   { id: 'settings-edit', category: 'Administration', name: 'Edit Settings', description: 'Modify system settings' },
   { id: 'role-manage', category: 'Administration', name: 'Manage Roles', description: 'Create, edit and delete roles' },
   { id: 'automation-manage', category: 'Administration', name: 'Manage Automation', description: 'Create and manage automation rules' },
+  { id: 'audit-view', category: 'Audit', name: 'View Audit Log', description: 'Read the audit log of changes made in the system' },
 ];

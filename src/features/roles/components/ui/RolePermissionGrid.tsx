@@ -21,6 +21,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Users': 'bg-cyan-50 border-cyan-200 dark:bg-cyan-950/30 dark:border-cyan-800/50',
   'Teams': 'bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800/50',
   'Reports': 'bg-teal-50 border-teal-200 dark:bg-teal-950/30 dark:border-teal-800/50',
+  'Audit': 'bg-orange-50 border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50',
   'Administration': 'bg-slate-50 border-slate-200 dark:bg-slate-900/40 dark:border-slate-800/50',
 };
 
